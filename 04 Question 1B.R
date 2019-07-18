@@ -116,218 +116,96 @@ f_one_way_plot_data <- function(factor,response,data) {
   data.frame(x_values=factor_values, y_values=one_way_plot_y)
 }
 
+f_one_way_plot<-function(factor,response,data,ylab){
+  one_way_plot_data<-f_one_way_plot_data(factor, response, data)
+  
+  plot<-ggplot(data=one_way_plot_data)+
+    geom_bar(aes(x_values,y_values), stat='identity')+
+    xlab(factor)+
+    ylab(ylab)+
+    scale_y_continuous(labels = scales::percent) +
+    theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+  
+  list(one_way_plot_data,plot)
+}
 
 
-##############################
-#One way plot of housing rate in function of all other variables
-##############################
+#f_one_way_plot('age','housing_bin',bank,'Mortgage Rate')
 
-factor<-'age'
-one_way_plot_data<-f_one_way_plot_data(factor,'housing_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Housing Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+##########################################
+#Check every one-way chart for housing
+##########################################
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Housing Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+factors<-c('age','age_group','age_capped','balance_log','job', 'marital', 'education')
 
+one_way_housing<-lapply(factors,f_one_way_plot,'housing_bin',bank,'Mortgage Rate')
+
+#age
+one_way_housing[1]
 #second degree relation with mortgage
 #impact plateaus around 70, consider capping values?
 
+#age_group
+one_way_housing[2]
 
-factor<-'age_group'
-one_way_plot_data<-f_one_way_plot_data(factor,'housing_bin', bank)
-#plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Housing Rate')
-#axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#age_capped
+one_way_housing[3]
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Housing Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'balance_log'
-one_way_plot_data<-f_one_way_plot_data(factor, 'housing_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Housing Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#Balance_log
+one_way_housing[4]
 #Decreasing, to be more precise, we would need to create different bands, relation stronger in higher values
 #Test second degree in glm
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Housing Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'job'
-one_way_plot_data<-f_one_way_plot_data(factor,'housing_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Housing Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#job
+one_way_housing[5]
 #Seem significant, unknown is very low and probably self fulfilling. A bank wouldn't give a loan without
 #knowing employment details and this data appears to be most recent info at the time data was pulled.
 #Should be removed.
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Housing Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-
-factor<-'marital'
-one_way_plot_data<-f_one_way_plot_data(factor, 'housing_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Housing Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#marital
+one_way_housing[6]
 #Lower for single, highest for married, makes sense.
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Housing Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'education'
-one_way_plot_data<-f_one_way_plot_data(factor, 'housing_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Housing Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#education
+one_way_housing[7]
 #Secondary higher; not obvious why. Perhaps wealthy enough to buy a house, but tertiary are 
 #wealthier and hence do not need a loan to buy a property?
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Housing Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
 
+##########################################
+#Check every one-way chart for housing
+##########################################
 
+factors<-c('age','age_group','age_capped','balance_log','job', 'marital', 'education')
 
+one_way_loan<-lapply(factors,f_one_way_plot,'loan_bin',bank,'Pers. Loan Rate')
 
-#############################
-#One way plot on loan rate
-#############################
+#age
+one_way_loan[1]
+#Correlation not as strong as for mortgage
 
-factor<-'age'
-one_way_plot_data<-f_one_way_plot_data(factor,'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
-#Correlation not as strong as for mortgage. 
+#age_group
+one_way_loan[2]
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+#age_capped
+one_way_loan[3]
 
-
-factor<-'age_group'
-one_way_plot_data<-f_one_way_plot_data(factor,'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
-#Correlation not as strong as for mortgage. 
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'age_capped'
-one_way_plot_data<-f_one_way_plot_data(factor,'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
-#Correlation not as strong as for mortgage. 
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'balance_log'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
-#strong decreasing correlation
+#Balance_log
+one_way_loan[4]
+#Decreasing correlation
 #First degree only needed for this model
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'balance_log_grouped'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'job'
-one_way_plot_data<-f_one_way_plot_data(factor,'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#job
+one_way_loan[5]
 #Strong correlation, unknown is again very low and likely to be self-fulfilling
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'marital'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#marital
+one_way_loan[6]
 #Divorced is the higest, sensible. Single is the lowest, less obvious but potential correlation with age.
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'education'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
+#education
+one_way_loan[7]
 #Secondary still the highest. Not obvious why, potential correlation with jobs which is more likely to have a causation effect on the variable.
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
 
 
 
@@ -548,13 +426,7 @@ bank_DT[job=='retired',.N,floor(age/5)*5][order(floor)]
 
 #Loan rate super high for yound retirees
 factor='age'
-one_way_plot_data<-f_one_way_plot_data(factor,'loan_bin',bank_cleansed[bank_cleansed$job=='retired',])
-ggplot(data=one_way_plot_data)+
-   geom_bar(aes(x_values,y_values), stat='identity')+
-   xlab(factor)+
-   ylab('Pers. Loan Rate')+
-   scale_y_continuous(labels = scales::percent) +
-   theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+f_one_way_plot(factor,'loan_bin',bank_cleansed[bank_cleansed$job=='retired',],'Pers. Loan Rate')
 
 
 #Due to unexpected retired behaviour, a new variable will be create.
@@ -601,6 +473,7 @@ RF_Loan<-randomForest(x=bank_cleansed[train,predictors_loan],y=bank_cleansed[tra
 
 
 
+
 ######################################
 
 #Set up Partial plots code
@@ -618,7 +491,7 @@ pplot_sample_position<-sample(1:nrow(bank_cleansed),10000)
 
 f_pplot <- function(pplot_factor,model,data) { 
   factor_values<-unique(data[,pplot_factor])
-
+  
   if (length(factor_values)<30) {
     factor_values<-factor_values[order(factor_values)]
   } else{
@@ -638,6 +511,20 @@ f_pplot <- function(pplot_factor,model,data) {
 }
 
 
+f_pplot_chart<-function(pplot_factor,model,data,ylab) {
+  
+  pplot_data<-f_pplot(pplot_factor,model,data)
+  
+  plot<-ggplot(data=pplot_data)+
+    geom_bar(aes(x_values,y_values), stat='identity')+
+    xlab(pplot_factor)+
+    ylab(ylab)+
+    scale_y_continuous(labels = scales::percent) +
+    theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+  
+  list(pplot_data,plot)
+}
+
 
 
 ###############################
@@ -646,6 +533,7 @@ f_pplot <- function(pplot_factor,model,data) {
 
 ###############################
 
+
 pplot_sample_data<-bank_cleansed[pplot_sample_position, housing_predictors]
 
 #What is the benchmark housing_rate?
@@ -653,72 +541,29 @@ pplot_sample_data<-bank_cleansed[pplot_sample_position, housing_predictors]
 sum(bank_cleansed[,'housing_bin']==1)/nrow(bank_cleansed)
 #Response 0.543427
 
-factor<-'balance_log'
-pplot_data<-f_pplot(factor, RF_Housing, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Housing Rate')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-#View(pplot_data)
-
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Mortgage Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
 
 
-factor<-'marital'
-pplot_data<-f_pplot(factor, RF_Housing, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Casual count')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-#View(pplot_data)
+#This may take a few minutes
+pplot_housing<-lapply(housing_predictors,f_pplot_chart,RF_Housing, bank_cleansed,'Mortgage_Rate')
 
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Mortgage Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+#################
+#Check all plots
+#################
 
-factor<-'age'
-pplot_data<-f_pplot(factor, RF_Housing, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Casual count')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-#View(pplot_data)
+#age
+pplot_housing[1]
 
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Mortgage Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+#job
+pplot_housing[2]
 
-factor<-'job'
-pplot_data<-f_pplot(factor, RF_Housing, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Casual count')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-View(pplot_data)
+#marital
+pplot_housing[3]
 
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Mortgage Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+#Education
+pplot_housing[4]
 
-
-factor<-'education'
-pplot_data<-f_pplot(factor, RF_Housing, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Casual count')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-#View(pplot_data)
-
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Mortgage Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+#Balance Log
+pplot_housing[5]
 
 #########################################
 #Housing Loan model from RF looks robust
@@ -735,86 +580,33 @@ ggplot(data=pplot_data)+
 
 pplot_sample_data<-bank_cleansed[pplot_sample_position, predictors_loan]
 
-
-
 #What is the benchmark Personal Loan rate?
 sum(bank_cleansed$loan_bin==1)/nrow(bank_cleansed)
 #Response 0.1465222
 
 
+#This may take a few minutes
+pplot_loan<-lapply(predictors_loan,f_pplot_chart,RF_Loan, bank_cleansed,'Pers. Loan Rate')
 
-factor<-'balance_log'
-pplot_data<-f_pplot(factor, RF_Loan, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-View(pplot_data)
-#Looks overfit, especially on large values
+#############
+#Check all charts
+###########
 
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'marital'
-pplot_data<-f_pplot(factor, RF_Loan, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-#View(pplot_data)
-
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-
-factor<-'age'
-pplot_data<-f_pplot(factor, RF_Loan,bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-#View(pplot_data)
-
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Pers. Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+#Age
+pplot_loan[1]
 #!!! Very high loan rate on young age looks wrong
 
-
-
-factor<-'job'
-pplot_data<-f_pplot(factor, RF_Loan,bank_cleansed)
-
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
+#job
+pplot_loan[2]
 #!!! Retirees too high, looks to be picking up on outliers
-View(pplot_data)
 
+pplot_loan[3]
 
+pplot_loan[4]
 
-factor<-'education'
-pplot_data<-f_pplot(factor, RF_Loan, bank_cleansed)
-plot(pplot_data, type="h", xaxt="n", main=paste0('Partial plot ', factor), xlab=factor, ylab='Personal Loan Rate')
-axis(1, at=pplot_data$x_values, labels=pplot_data$x_values)
-View(pplot_data)
+pplot_loan[5]
+#Looks overfit
 
-ggplot(data=pplot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
 
 ###########################
 # RF on personal loan is deemed overfit, some data inconsistensies are picked up on
@@ -824,72 +616,39 @@ ggplot(data=pplot_data)+
 
 
 
+
 ##############################
 #Trouble shooting, one-way plot on retired only and personal_loan rate
 #############################
 
 
-#####
+###########################
 #One way plot on loan rate
-#####
+##########################
 
 
 
 trouble_shoot_data<-bank[bank$job=='retired',]
-
-factor<-'age'
-one_way_plot_data<-f_one_way_plot_data(factor,'loan_bin', trouble_shoot_data)
- 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Personal Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20))
+trouble_shoot_factors<-c('age', 'balance_log','marital','education')
 
 
+one_way_troubleshoot_retirees<-lapply(trouble_shoot_factors,f_one_way_plot,'loan_bin',trouble_shoot_data,'Pers. Loan Rate')
+
+#Age
+one_way_troubleshoot_retirees[1]
 #Why are there some retired 20 years old? This could be the problem
-
 hist(trouble_shoot_data$age)
 qplot(trouble_shoot_data$age, geom="histogram") 
-
 View(bank_DT[job=='retired',.N,age][order(age)])
 
+#Balance_log
+one_way_troubleshoot_retirees[2]
 
+#Marital
+one_way_troubleshoot_retirees[3]
 
-
-factor<-'balance_log'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',trouble_shoot_data)
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Personal Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20))
-
-
-
-
-factor<-'marital'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',trouble_shoot_data)
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Personal Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20))
-
-
-
-
-factor<-'education'
-one_way_plot_data<-f_one_way_plot_data(factor, 'loan_bin',trouble_shoot_data)
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('Personal Loan Rate')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20))
+#Education
+one_way_troubleshoot_retirees[4]
 
 
 
