@@ -48,7 +48,7 @@ qplot(bank$age, geom='histogram')
 #little exposure before 20 and after 60
 
 bank$age_group<-sapply(bank$age, function(x) {
-  if (x<=25) 25
+  if (x<25) 25
   else if (x>60) 65
   else ceiling(x/5)*5
 })
