@@ -73,7 +73,6 @@ bank_DT[balance<0,.N,default] #88% of clients with negative balance are not flag
 
 
 #Create function if 04 Question 1B.R hasn't been run earlier
-
 f_one_way_plot_data <- function(factor,response,data) { 
   factor_values<-unique(data[,factor])
   
@@ -100,45 +99,69 @@ f_one_way_plot_data <- function(factor,response,data) {
   data.frame(x_values=factor_values, y_values=one_way_plot_y)
 }
 
+f_one_way_plot<-function(factor,response,data,ylab){
+  one_way_plot_data<-f_one_way_plot_data(factor, response, data)
+  
+  plot<-ggplot(data=one_way_plot_data)+
+    geom_bar(aes(x_values,y_values), stat='identity')+
+    xlab(factor)+
+    ylab(ylab)+
+    scale_y_continuous(labels = scales::percent) +
+    theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
+  
+  list(one_way_plot_data,plot)
+}
 
-##################
+###############################################
 
-#Draw plots on % of clients with credit in default
+#Draw one way plots on % of clients with credit in default
 
+#################################################
 
-##################
+factors<-c('age','job','marital','education','balance','housing','loan')
 
+one_way_default<-lapply(factors,f_one_way_plot,'default_bin',bank,'% of clients with credit in default  ')
 
 #Age
-
-factor<-'age'
-one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
-plot(one_way_plot_data, type="h", xaxt="n", main=paste0('One-way plot ', factor), xlab=factor, ylab='Default Rate')
-axis(1, at=one_way_plot_data$x_values, labels=one_way_plot_data$x_values)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% of clients with credit in default  ')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20))
+one_way_default[1]
 
 #Job
+one_way_default[2]
+#Entrepreneur are much more likely to default
+#Check if more likely once we accounted for their higher likeliness to take a loan
+#Make the job plot prettier
+
+#Marital
+one_way_default[3]
+#Divorced more likely to default
+
+#Multiplier effect of divorced
+one_way_default[[3]][[1]][one_way_default[[3]][[1]]$x_values=='divorced',2]/(sum(bank$default=='yes')/nrow(bank))
+#1.4x more likely
+
+#Education
+one_way_default[4]
+
+#Balance
+one_way_default[5]
+#Negative balance but at 60%, needs to be self-fulfilling
+#0 similar
+
+#housing
+one_way_default[6]
+
+#loan
+one_way_default[7]
+#Obviously loan is much more likely, but deemed too likely to be self-fulfilling
+
+########################
+#Make Job chart prettier
+########################
+
 
 factor<-'job'
 one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
 
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% with credit in default')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-#Entrepreneur are much more likely to default
-#Check if more likely once we accounted for their higher likeliness to take a loan
-
-#Make the job plot prettier
 
 ggplot(data=cbind(one_way_plot_data,job=one_way_plot_data$x_values))+
   geom_bar(aes(x_values,y_values,fill=y_values), stat='identity',show.legend = FALSE)+
@@ -149,79 +172,6 @@ ggplot(data=cbind(one_way_plot_data,job=one_way_plot_data$x_values))+
   scale_fill_distiller(palette = "YlOrRd", direction=1)
 #  scale_fill_distiller(palette = "Spectral")
 #  scale_fill_gradient(low = "peachpuff", high = "firebrick3")
-
-#Multiplier effect of entrepreneur on default rate
-one_way_plot_data[one_way_plot_data$x_values=='entrepreneur',2]/(sum(bank$default=='yes')/nrow(bank))
-
-
-#Marital
-
-factor<-'marital'
-one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% of clients with credit in default  ')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-#Divorced more likely to default
-
-#Multiplier effect of divorced
-one_way_plot_data[one_way_plot_data$x_values=='divorced',2]/(sum(bank$default=='yes')/nrow(bank))
-#1.4x
-
-#Education
-
-factor<-'education'
-one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% of clients with credit in default  ')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-#Balance
-
-factor<-'balance'
-one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% of clients with credit in default  ')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-#Negative balance but at 60%, needs to be self-fulfilling
-#0 similar
-
-#Housing
-
-factor<-'housing'
-one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% of clients with credit in default  ')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-#Loan
-
-factor<-'loan'
-one_way_plot_data<-f_one_way_plot_data(factor,'default_bin',bank)
-
-ggplot(data=one_way_plot_data)+
-  geom_bar(aes(x_values,y_values), stat='identity')+
-  xlab(factor)+
-  ylab('% of clients with credit in default  ')+
-  scale_y_continuous(labels = scales::percent) +
-  theme(text = element_text(size=20),axis.text.x = element_text(angle = 90))
-
-#Obviously lon is much more likely, but deemed too likely to be self-fulfilling
 
 ########################################################################
 #Deep dive into entrepreneur
